@@ -1,6 +1,7 @@
 import yfinance as yf
 
 import matplotlib
+# Use Qt backend for matplotlib GUI windows
 matplotlib.use("QtAgg")
 import matplotlib.pyplot as plt
 
