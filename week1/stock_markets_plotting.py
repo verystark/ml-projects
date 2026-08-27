@@ -1,8 +1,5 @@
 import yfinance as yf
 
-import matplotlib
-# Use Qt backend for matplotlib GUI windows
-matplotlib.use("QtAgg")
 import matplotlib.pyplot as plt
 
 tickers = ['NDA-FI.HE', 'NOKIA.HE', 'KNEBV.HE', 'SAMPO.HE', 'NESTE.HE',
@@ -15,7 +12,7 @@ tickers = ['NDA-FI.HE', 'NOKIA.HE', 'KNEBV.HE', 'SAMPO.HE', 'NESTE.HE',
 best_company = ''
 best_return = 0
 for i in tickers:
-    data = yf.download(i, '2020-01-01', '2026-01-01', auto_adjust=False)
+    data = yf.download(i, '2020-01-01', '2026-01-01', auto_adjust=False, progress=False, threads=False)
     print('downloaded', i)
     adj_close = data['Adj Close']
     change = adj_close.iloc[-1] / adj_close.iloc[0]
