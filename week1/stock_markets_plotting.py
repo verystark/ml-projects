@@ -19,9 +19,11 @@ for i in tickers:
     percent_change = (change.iloc[0] - 1) * 100
     print(f'{i}: {'+' if percent_change > 0 else ''}{percent_change:.2f}%')
     print(f'If you invested 1000 euros in the start date you would have {(change.iloc[0] * 1000):.2f} euros in the end date')
+
     if change.iloc[0] > best_return:
         best_return = change.iloc[0]
         best_company = i
+
     adj_close.plot()
     plt.show()
 
