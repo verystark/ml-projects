@@ -1,10 +1,11 @@
 import yfinance as yf
-
+import numpy as np
 import matplotlib.pyplot as plt
 
 def my_linfit(x, y):
-    a = 0
-    b = 0
+    a = (-sum(x)*sum(y)+len(x)*sum(x*y))/(len(x)*sum(x**2)-(sum(x)**2))
+    b = (-a*sum(x)+sum(y))/len(x)
+
     return a, b
 
 def main():
@@ -22,8 +23,12 @@ def main():
         x = []
         for i in range(y.size):
             x.append(i)
+        x = np.array(x)
 
         a, b = my_linfit(x, y)
+
+        plt.plot(data.index, a*x+b)
+        plt.show()
 
 if __name__ == '__main__':
     main()
