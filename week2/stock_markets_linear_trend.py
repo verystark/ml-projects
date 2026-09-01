@@ -8,3 +8,8 @@ tickers = ['NDA-FI.HE', 'NOKIA.HE', 'KNEBV.HE', 'SAMPO.HE', 'NESTE.HE',
            'HIAB.HE', 'HUH1V.HE', 'MANTA.HE', 'OUT1V.HE', 'KEMIRA.HE',
            'TYRES.HE', 'LUMO.HE', 'TIETO.HE', 'BITTI.HE', 'QTCOM.HE'
            ]
+
+
+if __name__ == '__main__':
+    for i in tickers:
+        data = yf.download(i, '2022-02-24', '2026-08-31', auto_adjust=False, threads=False)
