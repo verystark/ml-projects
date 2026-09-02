@@ -9,11 +9,11 @@ def my_linfit(x, y):
     return a, b
 
 def main():
-    tickers = ['NDA-FI.HE'#, 'NOKIA.HE', 'KNEBV.HE', 'SAMPO.HE', 'NESTE.HE',
-           #'FORTUM.HE', 'WRT1V.HE', 'METSO.HE', 'UPM.HE', 'ORNBV.HE',
-           #'KESKOB.HE', 'STERV.HE', 'KCR.HE', 'ELISA.HE', 'VALMT.HE',
-           #'HIAB.HE', 'HUH1V.HE', 'MANTA.HE', 'OUT1V.HE', 'KEMIRA.HE',
-           #'TYRES.HE', 'LUMO.HE', 'TIETO.HE', 'BITTI.HE', 'QTCOM.HE'
+    tickers = ['NDA-FI.HE', 'NOKIA.HE', 'KNEBV.HE', 'SAMPO.HE', 'NESTE.HE',
+           'FORTUM.HE', 'WRT1V.HE', 'METSO.HE', 'UPM.HE', 'ORNBV.HE',
+           'KESKOB.HE', 'STERV.HE', 'KCR.HE', 'ELISA.HE', 'VALMT.HE',
+           'HIAB.HE', 'HUH1V.HE', 'MANTA.HE', 'OUT1V.HE', 'KEMIRA.HE',
+           'TYRES.HE', 'LUMO.HE', 'TIETO.HE', 'BITTI.HE', 'QTCOM.HE'
            ]
 
     for company in tickers:
@@ -27,6 +27,7 @@ def main():
 
         a, b = my_linfit(x, y)
 
+        adj_close.plot()
         plt.plot(data.index, a*x+b)
         plt.show()
 
