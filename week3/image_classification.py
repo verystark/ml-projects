@@ -4,8 +4,15 @@ import random
 import numpy as np
 
 def my_1nn(x_train, y_train, x_test):
+    labels = []
     for i in x_test:
-        
+        distance_all_pixels = []
+        for j in x_train:
+            distance = sum(np.sqrt((j-i)**2))
+            distance_all_pixels.append(distance)
+        labels.append(np.argmin(distance_all_pixels))
+
+    
 
 def sanity_check():
     pred = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
