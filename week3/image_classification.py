@@ -1,8 +1,20 @@
 import pickle
-
 import matplotlib.pyplot as plt
-
 import random
+import numpy as np
+
+def my_1nn(x_train, y_train, x_test):
+    for i in x_test:
+        
+
+def sanity_check():
+    pred = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    print('Do 10 sanity checks:')
+    for i in range(10):
+        gt = []
+        for i in range(10):
+            gt.append(random.randrange(0, 10))
+        print(f'sanity check: {my_cl_acc(pred, gt)}')
 
 def my_cl_acc(pred, gt):
     correct_class = 0
@@ -19,11 +31,10 @@ with open(data_fname, 'rb') as data_file:
     x_test = pickle.load(data_file)
     y_test = pickle.load(data_file)
 
-# testing the function
-pred = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-gt = []
-for i in range(10):
-    gt.append(random.randrange(0, 10))
-    
-print(my_cl_acc(pred, gt))
+sanity_check()
+
+x_train = np.reshape(x_train, (60000, 784))
+x_test = np.reshape(x_test, (10000, 784))
+
+my_1nn(x_train, y_train, x_test)
 
