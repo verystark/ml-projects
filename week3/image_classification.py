@@ -1,5 +1,4 @@
 import pickle
-import random
 import numpy as np
 from datetime import datetime
 
@@ -7,12 +6,16 @@ from datetime import datetime
 def my_1nn(x_train, y_train, x_test):
 
     # flatten training data to 60000x784 matrix
-    x_train = np.reshape(x_train, (len(x_train), 784))
-    x_test = np.reshape(x_test, (len(x_test), 784))
+    x_train = np.reshape(x_train, (len(x_train), 784)).astype(np.float32)
+    x_test = np.reshape(x_test, (len(x_test), 784)).astype(np.float32)
 
     labels_index = []
-    for i in x_test:
-        labels_index.append(np.argmin(np.sum((x_train-i)**2, axis=1)))
+    batch = 2000
+    # go through test images in batches of 100
+    for i in range(0, len(x_test), batch):
+        x_test_subset = x_test[i:i+batch]
+        # solve euclidean distance via matrix multiplications
+        labels_index.extend(np.argmin(-2 * x_test_subset @ x_train.T + np.sum(x_test_subset**2, axis=1)[:, np.newaxis] + np.sum(x_train**2, axis=1)[np.newaxis, :], axis=1))
 
     return y_train[labels_index]
 
@@ -25,6 +28,7 @@ def my_cl_acc(pred, gt):
     return correct_class / len(gt)
 
 def main():
+    print('Classifying images...')
 
     start_time = datetime.now()
     data_fname = 'clothes.pkl'
@@ -35,16 +39,15 @@ def main():
         x_test = pickle.load(data_file)
         y_test = pickle.load(data_file)
 
-    pred = my_1nn(x_train, y_train, x_test[:500])
+    pred = my_1nn(x_train, y_train, x_test[:10000])
 
     end_time = datetime.now()
     processing_time = end_time - start_time
     minutes = processing_time.seconds // 60
     seconds = processing_time.seconds % 60
 
-    print('Classifying images...')
     print(f'Processing time: {minutes}min {seconds}s for')
-    print(f'1_NN classification accuracy is {my_cl_acc(pred, y_test[:500])}')
+    print(f'1_NN classification accuracy is {my_cl_acc(pred, y_test[:10000])}')
 
 if __name__ == "__main__":
     main()
