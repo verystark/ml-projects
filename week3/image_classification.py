@@ -4,16 +4,21 @@ import random
 import numpy as np
 
 def my_1nn(x_train, y_train, x_test):
-    labels = []
+    labels_index = []
     for i in x_test:
         distance_all_pixels = []
         for j in x_train:
             distance = sum(np.sqrt((j-i)**2))
             distance_all_pixels.append(distance)
-        labels.append(np.argmin(distance_all_pixels))
+        labels_index.append(np.argmin(distance_all_pixels))
+
+    labels_pred = []
+    for i in labels_index:
+        labels_pred.append(y_train[i])
+
+    return labels_pred
 
     
-
 def sanity_check():
     pred = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     print('Do 10 sanity checks:')
@@ -43,5 +48,6 @@ sanity_check()
 x_train = np.reshape(x_train, (60000, 784))
 x_test = np.reshape(x_test, (10000, 784))
 
-my_1nn(x_train, y_train, x_test)
+pred = my_1nn(x_train[:10000], y_train[:10000], x_test[:100])
+print(my_cl_acc(pred, y_test[:100]))
 
