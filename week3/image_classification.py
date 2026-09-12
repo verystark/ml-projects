@@ -12,7 +12,7 @@ def my_1nn(x_train, y_train, x_test):
 
     labels_index = []
     for i in x_test:
-        labels_index.append(np.argmin(np.sum(np.sqrt((x_train-i)**2), axis=1)))
+        labels_index.append(np.argmin(np.sum((x_train-i)**2, axis=1)))
 
     return y_train[labels_index]
 
