@@ -11,7 +11,7 @@ def my_1nn(x_train, y_train, x_test):
 
     labels_index = []
     batch = 2000
-    # go through test images in batches of 100
+    # go through test images in batches of 2000 to save memory
     for i in range(0, len(x_test), batch):
         x_test_subset = x_test[i:i+batch]
         # solve euclidean distance via matrix multiplications
