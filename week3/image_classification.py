@@ -11,7 +11,7 @@ def my_1nn(x_train, y_train, x_test):
 
     labels_index = []
     batch = 2000
-    # go through test images in batches of 2000 to save memory
+    # go through test images in batches to reduce memory usage
     for i in range(0, len(x_test), batch):
         x_test_subset = x_test[i:i+batch]
         # solve euclidean distance via matrix multiplications
@@ -39,7 +39,7 @@ def main():
         x_test = pickle.load(data_file)
         y_test = pickle.load(data_file)
 
-    pred = my_1nn(x_train, y_train, x_test[:10000])
+    pred = my_1nn(x_train, y_train, x_test)
 
     end_time = datetime.now()
     processing_time = end_time - start_time
@@ -47,7 +47,7 @@ def main():
     seconds = processing_time.seconds % 60
 
     print(f'Processing time: {minutes}min {seconds}s for')
-    print(f'1_NN classification accuracy is {my_cl_acc(pred, y_test[:10000])}')
+    print(f'1_NN classification accuracy is {my_cl_acc(pred, y_test)}')
 
 if __name__ == "__main__":
     main()
