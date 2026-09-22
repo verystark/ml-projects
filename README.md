@@ -11,3 +11,5 @@ Derived the analytical solution for the parameters of a linear model and impleme
 Implemented a 1-nearest-neighbor (1-NN) classifier for a dataset containing 60,000 training images and 10,000 test images. Used NumPy vectorization, linear algebra, matrix multiplication, and batching to improve the performance of the classifier while maintaining its accuracy.
 
 The optimized implementation achieved 84.75% classification accuracy with a runtime of approximately 3 seconds.
+
+### Week 4 - 
