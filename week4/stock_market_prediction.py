@@ -48,13 +48,30 @@ def main():
         X_all_tr.append(X)
         Y_all_tr.append(Y)
 
+    X_all_test = []
+    Y_all_test = []
+
+    for ticker in tickers:
+        data = yf.download(ticker, '2026-01-01', '2026-09-22',
+                           group_by=ticker, auto_adjust=False,
+                           threads=False, progress=False)[ticker]
+        prices = data['Adj Close'].to_numpy()
+
+        X, Y = create_dataset(prices)
+
+        X_all_test.append(X)
+        Y_all_test.append(Y)
+
     X = torch.from_numpy(X_all_tr[0].copy()).float()
     Y = torch.from_numpy(Y_all_tr[0].copy()).float()
+
+    X_t = torch.from_numpy(X_all_test[0].copy()).float()
+    Y_t = torch.from_numpy(Y_all_test[0].copy()).float()
 
     model = LinearModel()
 
     criterion =  nn.MSELoss()
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.05)
 
     for epoch in range(1000):
         optimizer.zero_grad()
@@ -68,8 +85,11 @@ def main():
         optimizer.step()
 
         if epoch % 100 == 0:
-            print(f'epoch: {epoch}, loss: {loss.item()}')
+            print(f'epoch: {epoch}, loss: {loss.item():.6f}')
 
+    pred = model(X_t)
+    print(criterion(pred, Y_t).item())
+    
 
 
 if __name__ == "__main__":
