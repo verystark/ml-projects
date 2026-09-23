@@ -10,7 +10,7 @@ class LinearModel(nn.Module):
         super().__init__()
 
         self.linear1 = nn.Linear(100, 10)
-        self.output = nn.Linear(10, 1)
+        self.output = nn.Linear(10, 10)
 
     def forward(self, x):
         y = self.linear1(x)
