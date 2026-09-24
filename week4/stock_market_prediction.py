@@ -125,7 +125,7 @@ def main():
                        auto_adjust=False, threads=False, progress=False)
 
     normalized_prices = normalization(data)
-    X = torch.from_numpy(normalized_prices[-100:].copy()).float()
+    X = torch.from_numpy(normalized_prices[-100:].copy()).float().reshape(1, 100)
 
     kemira_normalized_pred = model(X)
 
@@ -134,7 +134,7 @@ def main():
     std = prices.std()
 
     non_normalized_pred = kemira_normalized_pred * std + mean
-    print(f'KEMIRA price prediction for Monday, September 28: {non_normalized_pred}')
+    print(f'KEMIRA price prediction for Monday, September 28: {non_normalized_pred[0, 1].item():.6f}€')
 
     
     
