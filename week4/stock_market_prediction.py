@@ -43,6 +43,10 @@ def main():
                            threads=False, progress=False)[ticker]
     
         prices = data['Adj Close'].to_numpy()
+        mean = prices.mean()
+        std = prices.std()
+
+        prices = (prices - mean) / std
         # create dataset of prices
         X, Y = create_dataset(prices)
 
@@ -58,7 +62,12 @@ def main():
         data = yf.download(ticker, '2026-01-01', '2026-09-22',
                            group_by=ticker, auto_adjust=False,
                            threads=False, progress=False)[ticker]
+        
         prices = data['Adj Close'].to_numpy()
+        mean = prices.mean()
+        std = prices.std()
+        
+        prices = (prices - mean) / std
         # create dataset of prices
         X, Y = create_dataset(prices)
 
@@ -68,22 +77,25 @@ def main():
     # join all OMXH25 company closing price data to one 2D numpy array
     X_all_tr = np.concatenate(X_all_tr, axis=0)
     Y_all_tr = np.concatenate(Y_all_tr, axis=0)
-    #X_all_test = np.concatenate(X_all_test, axis=0)
-    #Y_all_test = np.concatenate(Y_all_test, axis=0)
+    X_all_test = np.concatenate(X_all_test, axis=0)
+    Y_all_test = np.concatenate(Y_all_test, axis=0)
 
-    # turn training data to tensors
+    # turn training data into tensors
     X = torch.from_numpy(X_all_tr.copy()).float()
     Y = torch.from_numpy(Y_all_tr.copy()).float()
 
-    X_t = torch.from_numpy(X_all_test[19].copy()).float()
-    Y_t = torch.from_numpy(Y_all_test[19].copy()).float()
+    # turn test data into tensors
+    X_t = torch.from_numpy(X_all_test.copy()).float()
+    Y_t = torch.from_numpy(Y_all_test.copy()).float()
+
+    torch.manual_seed(42)
 
     model = LinearModel()
 
     criterion =  nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.008)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.002)
 
-    for epoch in range(1000):
+    for epoch in range(2000):
         # set gradients to zero
         optimizer.zero_grad()
 
@@ -101,10 +113,10 @@ def main():
         if epoch % 100 == 0:
             print(f'epoch: {epoch}, loss: {loss.item():.6f}')
 
-    # prediction for KEMIRA
+    # test prediction accuracy
     pred = model(X_t)
-    print(criterion(pred, Y_t).item())
-    print(pred[-1][-1])
+    print(f'Test loss: {criterion(pred, Y_t).item()}')
+
     
 
 
