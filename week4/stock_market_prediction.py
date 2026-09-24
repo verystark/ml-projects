@@ -18,6 +18,7 @@ class LinearModel(nn.Module):
         y = self.output(y)
         return y
 
+# create training pairs using sliding window algorithm
 def create_dataset(prices):
     X = sliding_window_view(prices, 100)[:-10]
     Y = sliding_window_view(prices[100:], 10)
@@ -34,15 +35,15 @@ def main():
     X_all_tr = []
     Y_all_tr = []
 
-    # Form training data
+    # form training data
     for ticker in tickers:
-        # Load data
+        # load data
         data = yf.download(ticker, '2020-01-01', '2025-12-31',
                            group_by=ticker, auto_adjust=False,
                            threads=False, progress=False)[ticker]
     
         prices = data['Adj Close'].to_numpy()
-        # Create dataset of prices
+        # create dataset of prices
         X, Y = create_dataset(prices)
 
         X_all_tr.append(X)
@@ -51,44 +52,59 @@ def main():
     X_all_test = []
     Y_all_test = []
 
+    # form testing data
     for ticker in tickers:
+        # load data
         data = yf.download(ticker, '2026-01-01', '2026-09-22',
                            group_by=ticker, auto_adjust=False,
                            threads=False, progress=False)[ticker]
         prices = data['Adj Close'].to_numpy()
-
+        # create dataset of prices
         X, Y = create_dataset(prices)
 
         X_all_test.append(X)
         Y_all_test.append(Y)
 
-    X = torch.from_numpy(X_all_tr[0].copy()).float()
-    Y = torch.from_numpy(Y_all_tr[0].copy()).float()
+    # join all OMXH25 company closing price data to one 2D numpy array
+    X_all_tr = np.concatenate(X_all_tr, axis=0)
+    Y_all_tr = np.concatenate(Y_all_tr, axis=0)
+    #X_all_test = np.concatenate(X_all_test, axis=0)
+    #Y_all_test = np.concatenate(Y_all_test, axis=0)
 
-    X_t = torch.from_numpy(X_all_test[0].copy()).float()
-    Y_t = torch.from_numpy(Y_all_test[0].copy()).float()
+    # turn training data to tensors
+    X = torch.from_numpy(X_all_tr.copy()).float()
+    Y = torch.from_numpy(Y_all_tr.copy()).float()
+
+    X_t = torch.from_numpy(X_all_test[19].copy()).float()
+    Y_t = torch.from_numpy(Y_all_test[19].copy()).float()
 
     model = LinearModel()
 
     criterion =  nn.MSELoss()
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.05)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.008)
 
     for epoch in range(1000):
+        # set gradients to zero
         optimizer.zero_grad()
 
+        # make prediction with model
         Y_pred = model(X)
 
+        # compute loss of prediction
         loss = criterion(Y_pred, Y)
 
         loss.backward()
 
+        # compute updates based on optimizer rules
         optimizer.step()
 
         if epoch % 100 == 0:
             print(f'epoch: {epoch}, loss: {loss.item():.6f}')
 
+    # prediction for KEMIRA
     pred = model(X_t)
     print(criterion(pred, Y_t).item())
+    print(pred[-1][-1])
     
 
 
