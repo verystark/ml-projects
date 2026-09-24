@@ -24,6 +24,15 @@ def create_dataset(prices):
     Y = sliding_window_view(prices[100:], 10)
     return X, Y
 
+# normalization for company data to get them to similar scale
+def normalization(data):
+    prices = data['Adj Close'].to_numpy()
+    
+    mean = prices.mean()
+    std = prices.std()
+    return (prices - mean) / std
+
+
 def main():
     tickers = ['NDA-FI.HE', 'NOKIA.HE', 'KNEBV.HE', 'SAMPO.HE', 'NESTE.HE',
            'FORTUM.HE', 'WRT1V.HE', 'METSO.HE', 'UPM.HE', 'ORNBV.HE',
@@ -41,12 +50,9 @@ def main():
         data = yf.download(ticker, '2020-01-01', '2025-12-31',
                            group_by=ticker, auto_adjust=False,
                            threads=False, progress=False)[ticker]
-    
-        prices = data['Adj Close'].to_numpy()
-        mean = prices.mean()
-        std = prices.std()
 
-        prices = (prices - mean) / std
+        prices = normalization(data)
+    
         # create dataset of prices
         X, Y = create_dataset(prices)
 
@@ -63,11 +69,8 @@ def main():
                            group_by=ticker, auto_adjust=False,
                            threads=False, progress=False)[ticker]
         
-        prices = data['Adj Close'].to_numpy()
-        mean = prices.mean()
-        std = prices.std()
-        
-        prices = (prices - mean) / std
+        prices = normalization(data)
+
         # create dataset of prices
         X, Y = create_dataset(prices)
 
@@ -93,9 +96,9 @@ def main():
     model = LinearModel()
 
     criterion =  nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.002)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.007)
 
-    for epoch in range(2000):
+    for epoch in range(1000):
         # set gradients to zero
         optimizer.zero_grad()
 
@@ -117,6 +120,23 @@ def main():
     pred = model(X_t)
     print(f'Test loss: {criterion(pred, Y_t).item()}')
 
+    # form Kemira company data
+    data = yf.download('KEMIRA.HE', '2026-01-01', '2026-09-24',
+                       auto_adjust=False, threads=False, progress=False)
+
+    normalized_prices = normalization(data)
+    X = torch.from_numpy(normalized_prices[-100:].copy()).float()
+
+    kemira_normalized_pred = model(X)
+
+    prices = data['Adj Close'].to_numpy()
+    mean = prices.mean()
+    std = prices.std()
+
+    non_normalized_pred = kemira_normalized_pred * std + mean
+    print(f'KEMIRA price prediction for Monday, September 28: {non_normalized_pred}')
+
+    
     
 
 
