@@ -96,7 +96,7 @@ def main():
     model = LinearModel()
 
     criterion =  nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.007)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
 
     for epoch in range(1000):
         # set gradients to zero
@@ -118,7 +118,7 @@ def main():
 
     # test prediction accuracy
     pred = model(X_t)
-    print(f'Test loss: {criterion(pred, Y_t).item()}')
+    print(f'Test loss: {criterion(pred, Y_t).item():.6f}')
 
     # form Kemira company data
     data = yf.download('KEMIRA.HE', '2026-01-01', '2026-09-24',
@@ -134,7 +134,7 @@ def main():
     std = prices.std()
 
     non_normalized_pred = kemira_normalized_pred * std + mean
-    print(f'KEMIRA price prediction for Monday, September 28: {non_normalized_pred[0, 1].item():.6f}€')
+    print(f'KEMIRA price prediction for Monday, September 28: {non_normalized_pred[0, 1].item():.2f}€')
 
     
     
